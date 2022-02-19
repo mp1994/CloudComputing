@@ -17,6 +17,7 @@ def check_config():
     defaultPath = os.environ['HOME'] + "/.creds.json"
     if exists(defaultPath):
         print("Configuration found in: {}".format(defaultPath))
+        return defaultPath
     else:
         print("No configuration found in default path.")
 
