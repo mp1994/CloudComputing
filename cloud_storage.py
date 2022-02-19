@@ -36,7 +36,8 @@ def download_file(filename, provider, namespace=None, output=None):
     if not namespace is None:
         change_namespace(namespace)
     if output is None:
-        tmp = tf.TemporaryFile()
+        tmp = tf.NamedTemporaryFile()
+        print("Downloading to {} ...".format(tmp.name))
     else:
         tmp = open(output, 'w')
     provider.download_path(filename, tmp)
