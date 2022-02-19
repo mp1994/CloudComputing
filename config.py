@@ -13,13 +13,15 @@ def save_auth_token(fname="$HOME/.creds.json", creds=None):
     f = open(fname, 'w')
     json.dump(creds, f)
 
-def check_config():
+def check_config(silent=False):
     defaultPath = os.environ['HOME'] + "/.creds.json"
     if exists(defaultPath):
-        print("Configuration found in: {}".format(defaultPath))
+        if not silent:
+            print("Configuration found in: {}".format(defaultPath))
         return defaultPath
     else:
-        print("No configuration found in default path.")
+        if not silent:
+            print("No configuration found in default path.")
 
 def config():
     print("Starting OneDrive auth...")

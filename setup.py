@@ -6,7 +6,7 @@ LONG_DESCRIPTION = 'The CloudComputing package can be used to ease remote execut
 
 # Setting up
 setup(
-       # the name must match the folder name 'verysimplemodule'
+       # the name must match the folder name
         name="CloudComputing", 
         version=VERSION,
         author="Mattia Pesenti",
@@ -24,6 +24,5 @@ setup(
             "Programming Language :: Python :: 3",
             "Operating System :: MacOS :: MacOS X",
             "Operating System :: POSIX :: Linux",
-            "Operating System :: Microsoft :: Windows",
         ]
 )
