@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.3' 
+VERSION = '0.0.1' 
 DESCRIPTION = 'CloudComputing package'
 LONG_DESCRIPTION = 'The CloudComputing package can be used to ease remote executing over SSH and cloud storage (OneDrive) with Python.'
 
@@ -15,7 +15,7 @@ setup(
         long_description=LONG_DESCRIPTION,
         packages=find_packages(),
         install_requires=['cloudsync', 'cloudsync-onedrive'], # add any additional packages that 
-        # needs to be installed along with your package. Eg: 'caer'
+        # needs to be installed
         
         keywords=['python', 'cloud computing', 'onedrive'],
         classifiers= [
