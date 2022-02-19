@@ -5,4 +5,3 @@ from remote_exec import remote_exec
 __version__ = "0.0.1"
 __creds__ = check_config(silent=True)
 credsPath = __creds__
-# provider = connect(credsPath)
