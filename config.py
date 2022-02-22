@@ -42,7 +42,7 @@ def config(Force=False):
     save_auth_token(f, creds=token)
     print("[INFO] Token saved to file: {}".format(f))
 
-def config_ssh(host=None, port=22):
+def check_ssh_connection(host=None, port=22):
     if host is None:
         print("[ERROR] The first input cannot be None: provide a username-host pair, such as: user@127.0.0.1")
         return
