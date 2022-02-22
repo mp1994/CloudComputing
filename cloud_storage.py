@@ -3,14 +3,12 @@ import cloudsync as cs
 import tempfile as tf
 import pandas as pd
 import json
-from config import check_config 
+from vars import creds_path
 
-credsPath = check_config()
-
-def connect(credsPath):
+def connect():
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
     provider = cs.create_provider('onedrive', oauth_config=oauth_config)
-    f = open(credsPath, 'r')
+    f = open(creds_path, 'r')
     creds = json.load(f)
     provider.connect(creds)
     return provider

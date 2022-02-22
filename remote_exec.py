@@ -1,6 +1,7 @@
 import os
 import subprocess
 import tempfile as tf
+from vars import ssh_port, ssh_host
 DEBUG = False
 
 def remote_exec(path):
@@ -19,6 +20,6 @@ def remote_exec(path):
     fout.write(s)
     fout.close()
     # Run over SSH
-    subprocess.Popen("/usr/bin/ssh pesenti@10.75.4.93 python3 -u - < {}".format(fout.name), shell=True)
+    subprocess.Popen("/usr/bin/ssh -p {} {} python3 -u - < {}".format(ssh_port, ssh_host, fout.name), shell=True)
     # Exit to prevent calling script to run locally
     exit(0)
