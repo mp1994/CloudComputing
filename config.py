@@ -13,12 +13,12 @@ def get_auth_token():
     creds = provider.authenticate()
     return creds
 
-def save_auth_token(fname="$HOME/.creds.json", creds=None):
+def save_auth_token(fname="$HOME/.cc_auth.json", creds=None):
     f = open(fname, 'w')
     json.dump(creds, f)
 
 def check_auth(silent=False):
-    defaultPath = os.environ['HOME'] + "/.creds.json"
+    defaultPath = os.environ['HOME'] + "/.cc_auth.json"
     if exists(defaultPath):
         if not silent:
             print("[INFO] Configuration found in: {}".format(defaultPath))
@@ -40,7 +40,7 @@ def make_auth(Force=False):
     defaultPath = os.environ['HOME'] + "/"
     print("Specify path to save OneDrive auth token ({}): ".format(defaultPath), end='')
     f = input() or defaultPath
-    f = f + ".creds.json"
+    f = f + ".cc_auth.json"
     save_auth_token(f, creds=token)
     print("[INFO] Token saved to file: {}".format(f))
 
