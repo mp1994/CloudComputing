@@ -5,3 +5,5 @@ __all__ = ["ssh_host", "ssh_port", "creds_path"]
 ssh_host = ""
 ssh_port = ""
 creds_path = ""
+global_config = ""
+local_config = ""

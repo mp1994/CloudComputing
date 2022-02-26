@@ -3,6 +3,8 @@ import json
 import os
 from os.path import exists
 import subprocess
+import vars
+import configparser
 
 def get_auth_token():
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
@@ -46,6 +48,7 @@ def config(Force=False):
     defaultPath = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
     if exists(defaultPath):
         print("[INFO] Global SSH configuration found in {}".format(defaultPath))
+        vars.global_config = defaultPath
     else:
         print("[WARNING] Global SSH configuration not found. Call config.make_config() to create one.")
 
@@ -70,14 +73,34 @@ def make_config(local=False):
     f.write("port = {}\n".format(port))
     f.close()
     print("[INFO] {} configuration saved successfully.".format("Local" if local else "Global"))
+    if local:
+        vars.local_config = defaultPath
+    else:
+        vars.global_config = defaultPath
 
-def check_ssh_connection(host=None, port=22):
-    if host is None:
-        print("[ERROR] The first input cannot be None: provide a username-host pair, such as: user@127.0.0.1")
-        return
-    cmd = "ssh -p {} {} uname -n".format(port, host)
+def load_config():
+    p = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
+    if exists(p):
+        vars.global_config = p
+    p = "./config.ini"
+    if exists(p):
+        vars.local_config = p
+    if vars.global_config == "" and vars.local_config == "":
+        print("[WARNING] You need to set either a local or global configuration file.")
+        exit(0)
+    c = configparser.ConfigParser()
+    if vars.local_config == "":
+        c.read(vars.global_config)
+    else:
+        c.read(vars.local_config)
+    return c
+
+def check_ssh_connection():
+    if vars.global_config == "" and vars.local_config == "":
+        print("[ERROR] No valid configuration file found. Exiting...")
+    cmd = "ssh -p {} {} uname -n".format(vars.ssh_port, vars.ssh_host)
     print("Testing connection: " + cmd)
-    cmd = "ssh -p {} {} uname -n".format(port, host)
+    cmd = "ssh -p {} {} uname -n".format(vars.ssh_port, vars.ssh_host)
     try:
         out = subprocess.check_output(cmd, shell=True).decode().strip()
     except subprocess.CalledProcessError:
