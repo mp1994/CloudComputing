@@ -6,6 +6,7 @@ import subprocess
 import vars
 import configparser
 
+'''      ------------------      Cloud Storage     ------------------      '''
 def get_auth_token():
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
     provider = cs.create_provider('onedrive', oauth_config=oauth_config)
@@ -16,7 +17,7 @@ def save_auth_token(fname="$HOME/.creds.json", creds=None):
     f = open(fname, 'w')
     json.dump(creds, f)
 
-def check_config(silent=False):
+def check_auth(silent=False):
     defaultPath = os.environ['HOME'] + "/.creds.json"
     if exists(defaultPath):
         if not silent:
@@ -27,30 +28,32 @@ def check_config(silent=False):
             print("[INFO] No configuration found in default path.")
         return False
 
-def config(Force=False):
+def make_auth(Force=False):
     # cloud_storage
-    if check_config() == False:
+    if check_auth() == False:
         print("Starting OneDrive auth...")
     else:
         if Force == False:
-            print("Use check_config(Force=True) to overwrite existing configuration.")
+            print("Use check_auth(Force=True) to overwrite the existing OAuth token.")
             return
     token = get_auth_token()
     defaultPath = os.environ['HOME'] + "/"
     print("Specify path to save OneDrive auth token ({}): ".format(defaultPath), end='')
-    f = input()
-    if len(f) == 0:
-        f = defaultPath
+    f = input() or defaultPath
     f = f + ".creds.json"
     save_auth_token(f, creds=token)
     print("[INFO] Token saved to file: {}".format(f))
-    # SSH
+
+'''      ------------------      Remote   Exec     ------------------      '''
+def check_config(silent=False):
     defaultPath = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
     if exists(defaultPath):
-        print("[INFO] Global SSH configuration found in {}".format(defaultPath))
+        if not silent:
+            print("[INFO] Global SSH configuration found in {}".format(defaultPath))
         vars.global_config = defaultPath
     else:
-        print("[WARNING] Global SSH configuration not found. Call config.make_config() to create one.")
+        if not silent:
+            print("[WARNING] Global SSH configuration not found. Call config.make_config() to create one.")
 
 def make_config(local=False):
     if local:
