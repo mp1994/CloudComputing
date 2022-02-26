@@ -13,23 +13,62 @@ You need to set up a secure shell (SSH) connection with the remote host for the 
 The install process should be straight-forward: `pip install CloudComputing`. I recommend using [pyenv](https://github.com/pyenv/pyenv).
 
 ### Configuration
+#### Cloud Storage
+The `cloud_storage` module is based on the PyPi package `cloudsync`. By default, the latter handles authentication with a OAuth token and does not store user credentials, requiring re-authentication at every session. The `config` module provides functions to save and manage the OAuth token. This is saved in `json` format locally, either in `$HOME` (default) or in a user-provided path. Both OneDrive Personal and OneDrive for Business accounts should work out-of-the-box, with support for shared folders. To authenticate, run `config.make_auth()`:
+``` bash
+$ python -c 'import CloudComputing as cc; cc.make_auth()'
+```
 
-The `cloud_storage` module is based on the PyPi package `cloudsync`. By default, the latter handles authentication wih OAuth and does not store user credentials, requiring re-authentication at every session. The `config` module provides functions to save and manage the OAuth token. This is saved in `json` format locally, either in `$HOME` (default) or in a user-provided path. Both OneDrive Personal and OneDrive for Business accounts should work out-of-the-box, with support for shared folders.
+#### Remote Execution
 
 The `remote_exec` module can be configured either with a `config.ini` file, either globally (user space) or locally (project workspace). Please mind that the local configuration has higher priority over the global one, if any. This is intended to have both a user-defined default server and project-specific servers.
 ##### Global Configuration
 The global configuration can be set either manually or calling the `config.make_config()` function:
-```
+``` bash
 $ python -c 'import CloudComputing as cc; cc.make_config()'
 ```
 This will set the default `user@host` and the default `port` for SSH communication. The global configuration file is stored in `$HOME/.$USER-config.ini`.
 ##### Local Configuration
 Any project may have its local configuration. Local configurations have higher priority. They are specified by means of a local `config.ini` in the project's path, with the following structure. Local configurations may be created also with `config.make_config(local=True)`
-```
+``` ini
 ; config.ini
 [SSH]
 host = "user@127.0.0.1"
 port = 22
 ```
 
+### Disclaimer
+
+This software is released with the GNU General Public License v3.0.
+
 ### Example
+
+##### Cloud Storage
+``` python
+#!/usr/bin/env python
+import CloudComputing as cc
+import pandas as pd
+print("CloudComputing version: {}".format(cc._version))
+
+# Download file from OneDrive...
+path_in_onedrive = "/test.csv"
+f = cc.download_file(path_in_onedrive)
+# ... and import it to Pandas
+df = pd.read_csv(f)
+print(df.info())
+```
+##### Remote execution
+``` python
+#!/usr/bin/env python
+import CloudComputing as cc
+print("CloudComputing version {}".format(cc._version))
+# Remote execution of this script
+cc.remote_exec(__file__)
+
+# The rest of this file runs on a remote server via SSH...
+import os
+print("This is running on: {}".format(os.environ['HOME']))
+```
+
+#### Cloud Storage + Remote Execution
+[To do...]
