@@ -8,7 +8,7 @@ def remote_exec(path, verbose=True, logfile=None):
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         print("Running on local machine...")
         return
-    print("Exec from: {}".format(path))
+    print("Running from file: {}".format(path))
     # Open the calling script (from path) and read the file
     fin = open(path, 'r')
     # Split the script and take everything after separator
@@ -27,5 +27,7 @@ def remote_exec(path, verbose=True, logfile=None):
         print("Logging to file: {}".format(logfile))
         cmd = cmd + " > {}".format(logfile)
     subprocess.Popen(cmd, shell=True)
+    # Remove the temp file
+    os.system("rm {}".format(tmp))
     # Exit to prevent the calling script to run locally
     exit(0)
