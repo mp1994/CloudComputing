@@ -5,7 +5,7 @@ import vars
 
 def remote_exec(path, verbose=True, logfile=None):
     # If localhost, return
-    if vars.ssh_host == 'localhost' or vars.ssh_host == '127.0.0.1':
+    if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         print("Running on local machine...")
         return
     print("Exec from: {}".format(path))
