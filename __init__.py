@@ -1,4 +1,4 @@
-from cloud_storage import connect, change_namespace, download_file, upload_file
+from cloud_storage import connect, change_namespace, download_file
 from config import get_auth_token, save_auth_token, check_auth, make_auth, check_config, make_config, load_config, check_ssh_connection
 from remote_exec import remote_exec
 import vars
