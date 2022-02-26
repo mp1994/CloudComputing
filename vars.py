@@ -1,5 +1,7 @@
-__all__ = ["ssh_host", "ssh_port"]
+# This controls "import *" and actually imports only what is defined here
+__all__ = ["ssh_host", "ssh_port", "creds_path"]
 
+# These should not be modified here!
 ssh_host = ""
 ssh_port = ""
 creds_path = ""
