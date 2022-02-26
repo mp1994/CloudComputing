@@ -11,6 +11,7 @@ def get_auth_token():
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
     provider = cs.create_provider('onedrive', oauth_config=oauth_config)
     creds = provider.authenticate()
+    vars.provider = provider
     return creds
 
 def save_auth_token(fname="$HOME/.cc_auth.json", creds=None):
@@ -43,6 +44,8 @@ def make_auth(Force=False):
     f = f + ".cc_auth.json"
     save_auth_token(f, creds=token)
     print("[INFO] Token saved to file: {}".format(f))
+
+
 
 '''      ------------------      Remote   Exec     ------------------      '''
 def check_config(silent=False):
