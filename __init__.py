@@ -1,5 +1,5 @@
 from cloud_storage import connect, change_namespace, download_file, upload_file
-from config import config, check_config, check_ssh_connection
+from config import config, check_config, check_ssh_connection, make_config
 from remote_exec import remote_exec
 import configparser
 import vars
@@ -10,6 +10,7 @@ _version = "0.0.2"
 ## Global variables
 # cloud_storage
 vars.creds_path = check_config(silent=True)
+creds = vars.creds_path
 # remote_ssh
 c = configparser.ConfigParser()
 c.read("config.ini")

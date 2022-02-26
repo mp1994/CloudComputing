@@ -26,6 +26,7 @@ def check_config(silent=False):
         return False
 
 def config(Force=False):
+    # cloud_storage
     if check_config() == False:
         print("Starting OneDrive auth...")
     else:
@@ -41,6 +42,34 @@ def config(Force=False):
     f = f + ".creds.json"
     save_auth_token(f, creds=token)
     print("[INFO] Token saved to file: {}".format(f))
+    # SSH
+    defaultPath = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
+    if exists(defaultPath):
+        print("[INFO] Global SSH configuration found in {}".format(defaultPath))
+    else:
+        print("[WARNING] Global SSH configuration not found. Call config.make_config() to create one.")
+
+def make_config(local=False):
+    if local:
+        defaultPath = "./config.ini"
+    else:
+        defaultPath = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
+        if exists(defaultPath):
+            print("[INFO] Global configuration already set. This will overwrite the existing configuration.")
+    host = input("SSH user@host: ")
+    if not "@" in host:
+        print("Please provide user and host (e.g., admin@127.0.0.1")
+        return
+    port = input("SSH port (22): ") or "22" # Default: 22
+    f = open(defaultPath, 'w')
+    if f.closed:
+        print("[ERROR] Unable to open file {}".format(defaultPath))
+        return
+    f.write("[SSH]\n")
+    f.write("host = {}\n".format(host))
+    f.write("port = {}\n".format(port))
+    f.close()
+    print("[INFO] {} configuration saved successfully.".format("Local" if local else "Global"))
 
 def check_ssh_connection(host=None, port=22):
     if host is None:
