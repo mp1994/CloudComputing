@@ -4,7 +4,7 @@ from .remote_exec import remote_exec
 from . import vars
 
 # CloudComputing version
-__version__ = "0.0.9"
+__version__ = "0.1.0"
 # Author (GitHub username)
 __author__ = "mp1994"
 
