@@ -14,9 +14,9 @@ The install process should be straight-forward: `pip install CloudComputing`. I 
 
 ### Configuration
 #### Cloud Storage
-The `cloud_storage` module is based on the PyPi package `cloudsync`. By default, the latter handles authentication with a OAuth token and does not store user credentials, requiring re-authentication at every session. The `config` module provides functions to save and manage the OAuth token. This is saved in `json` format locally, either in `$HOME` (default) or in a user-provided path. Both OneDrive Personal and OneDrive for Business accounts should work out-of-the-box, with support for shared folders. To authenticate, run `config.make_auth()`:
+The `cloud_storage` module is based on the PyPi package `cloudsync`. By default, the latter handles authentication with a OAuth token and does not store user credentials, requiring re-authentication at every session. The `config` module provides functions to save and manage the OAuth token. This is saved in json format locally, either in `$HOME` (default) or in a user-provided path. Both OneDrive Personal and OneDrive for Business accounts should work out-of-the-box, with support for shared folders. To authenticate, run `config.make_auth()`:
 ``` bash
-$ python -c 'import CloudComputing as cc; cc.make_auth()'
+python -c 'import CloudComputing as cc; cc.make_auth()'
 ```
 
 #### Remote Execution
@@ -25,17 +25,24 @@ The `remote_exec` module can be configured either with a `config.ini` file, eith
 ##### Global Configuration
 The global configuration can be set either manually or calling the `config.make_config()` function:
 ``` bash
-$ python -c 'import CloudComputing as cc; cc.make_config()'
+python -c 'import CloudComputing as cc; cc.make_config()'
 ```
 This will set the default `user@host` and the default `port` for SSH communication. The global configuration file is stored in `$HOME/.$USER-config.ini`.
 ##### Local Configuration
-Any project may have its local configuration. Local configurations have higher priority. They are specified by means of a local `config.ini` in the project's path, with the following structure. Local configurations may be created also with `config.make_config(local=True)`
+Any project may have its local configuration. Local configurations have higher priority. They are specified by means of a local `config.ini` in the project's path, with the following structure. 
 ``` ini
 ; config.ini
 [SSH]
 host = "user@127.0.0.1"
 port = 22
 ```
+Local configurations may be created also with `config.make_config(local=True)`
+
+##### Remote Python Interpreter
+I recommend using [pyenv](https://github.com/pyenv/pyenv) in the remote machine to handle different projects with different Python versions and/or virtual environments. As of now, `remote_exec()` provides the `rdir` option, used to set the remote directory after SSH login. This requires prior configuration with `pyenv` or `pyvenv`. 
+<!-- 
+Check out the documentation to configure `pyenv` on the remote machine and specify the remote Python interpreter. 
+-->
 
 ### Disclaimer
 
@@ -71,4 +78,4 @@ print("This is running on: {}".format(os.environ['HOME']))
 ```
 
 #### Cloud Storage + Remote Execution
-[To do...]
+Combining Cloud Storage and Remote Execution requires installing and configuring `CloudComputing` also in the remote machine.
