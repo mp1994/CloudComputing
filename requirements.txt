@@ -1,3 +1,0 @@
-cloudsync==3.2.1
-cloudsync_onedrive==3.1.11
-cloudsync_gdrive=2.0.1
