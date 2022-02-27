@@ -4,7 +4,7 @@ from remote_exec import remote_exec
 import vars
 
 # CloudComputing version
-_version = "0.0.3"
+_version = "0.0.4"
 
 ## Global variables
 # cloud_storage
