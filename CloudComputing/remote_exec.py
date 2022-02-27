@@ -26,7 +26,7 @@ def remote_exec(path, rdir="", verbose=True, logfile=None):
     cmd = cmd + " 'cd {} &&".format(rdir)
     # Run over SSH
     print(vars.ssh_host + " " + vars.ssh_port)
-    cmd = cmd + " python -V && python -u -' < {}".format(tmp)
+    cmd = cmd + " python -u -' < {}".format(tmp)
     print(cmd)
     if not verbose:
         cmd = cmd + " 1>/dev/null 2>&1"
