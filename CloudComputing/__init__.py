@@ -4,7 +4,7 @@ from .remote_exec import remote_exec
 from . import vars
 
 # CloudComputing version
-__version__ = "0.0.6"
+__version__ = "0.0.9"
 # Author (GitHub username)
 __author__ = "mp1994"
 
@@ -15,5 +15,6 @@ creds = vars.creds_path
 # remote_exec
 check_config(silent=True)
 c = load_config()
-vars.ssh_host = c['SSH']['host']
-vars.ssh_port = c['SSH']['port']
+if not c is None:
+    vars.ssh_host = c['SSH']['host']
+    vars.ssh_port = c['SSH']['port']

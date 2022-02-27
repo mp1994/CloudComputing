@@ -93,7 +93,7 @@ def load_config():
         vars.local_config = p
     if vars.global_config == "" and vars.local_config == "":
         print("[WARNING] You need to set either a local or global configuration file.")
-        exit(0)
+        return None
     c = configparser.ConfigParser()
     if vars.local_config == "":
         c.read(vars.global_config)
