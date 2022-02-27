@@ -1,7 +1,7 @@
 import os
 import subprocess
 import tempfile as tf
-import vars
+from . import vars
 
 def remote_exec(path, rdir="", verbose=True, logfile=None):
     # If localhost, return

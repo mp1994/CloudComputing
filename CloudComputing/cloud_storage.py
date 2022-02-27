@@ -1,10 +1,10 @@
 from os import name
 import cloudsync as cs
 import tempfile as tf
-from config import make_auth
+from .config import make_auth
 import pandas as pd
 import json
-import vars
+from . import vars
 
 def connect():
     if vars.creds_path == "":

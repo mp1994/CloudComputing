@@ -3,7 +3,7 @@ import json
 import os
 from os.path import exists
 import subprocess
-import vars
+from . import vars
 import configparser
 
 '''      ------------------      Cloud Storage     ------------------      '''
