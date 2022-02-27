@@ -1,10 +1,12 @@
-from cloud_storage import connect, change_namespace, download_file
-from config import get_auth_token, save_auth_token, check_auth, make_auth, check_config, make_config, load_config, check_ssh_connection
-from remote_exec import remote_exec
-import vars
+from .cloud_storage import connect, change_namespace, download_file
+from .config import get_auth_token, save_auth_token, check_auth, make_auth, check_config, make_config, load_config, check_ssh_connection
+from .remote_exec import remote_exec
+from . import vars
 
 # CloudComputing version
-_version = "0.0.4"
+__version__ = "0.0.6"
+# Author (GitHub username)
+__author__ = "mp1994"
 
 ## Global variables
 # cloud_storage
