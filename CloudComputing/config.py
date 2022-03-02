@@ -45,6 +45,9 @@ def make_auth(Force=False):
     save_auth_token(f, creds=token)
     print("[INFO] Token saved to file: {}".format(f))
 
+def get_token():
+    f = open(vars.creds_path, 'r')
+    return f.read()
 
 
 '''      ------------------      Remote   Exec     ------------------      '''

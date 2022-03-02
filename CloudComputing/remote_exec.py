@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile as tf
 from . import vars
+from .config import get_token
 
 def remote_exec(path, rdir="./", verbose=True, logfile=None):
     # If localhost, return
@@ -16,7 +17,7 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     s = s[s.find("\n")+1:len(s)]   
     # Do we need to import CloudComputing? 
     if "CloudComputing" in s or "cc" in s:
-        s = "import CloudComputing as cc\n" + s
+        s = "import CloudComputing as cc\ncc.vars.token = {}\ncc.__token__ = cc.vars.token\n".format(get_token()) + s
     # Write to file
     tmp = os.path.join(tf.gettempdir(), os.urandom(8).hex() + '.py')
     fout = open(tmp, 'w')
@@ -26,10 +27,10 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     cmd = cmd = "/usr/bin/ssh -p {} {}".format(vars.ssh_port, vars.ssh_host)
     cmd = cmd + " 'cd {} &&".format(rdir)
     # Copy the temp file (script) to the remote working dir
-    os.system("/usr/bin/scp -P {} {} {}:{}".format(vars.ssh_port, tmp, vars.ssh_host, rdir))
+    xmd = "/usr/bin/scp -P {} {} {}:{}".format(vars.ssh_port, tmp, vars.ssh_host, rdir)
+    subprocess.run(xmd, shell=True)
     # Run over SSH
     cmd = cmd + " python {}'".format(tmp.split("/")[-1]) # Remove "/tmp/" from the filename
-    print(cmd)
     if not verbose:
         cmd = cmd + " 1>/dev/null 2>&1"
     if not logfile is None:
@@ -37,8 +38,8 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
         cmd = cmd + " > {}".format(logfile)
     subprocess.Popen(cmd, shell=True)
     # Remove the local temp file
-    os.system("rm {}".format(tmp))
+    subprocess.run("rm {}".format(tmp), shell=True)
     # Remove the remote temp file
-    os.system("/usr/bin/ssh -p {} {} 'rm {}/{}'".format(vars.ssh_port, vars.ssh_host, rdir, tmp.split("/")[-1]))
+    # os.system("/usr/bin/ssh -p {} {} 'rm {}/{}'".format(vars.ssh_port, vars.ssh_host, rdir, tmp.split("/")[-1]))
     # Exit to prevent the calling script to run locally
     exit(0)

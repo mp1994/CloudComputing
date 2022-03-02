@@ -7,12 +7,16 @@ import json
 from . import vars
 
 def connect():
-    if vars.creds_path == "":
-        make_auth()
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
+    if vars.token is None:
+        if vars.creds_path == "":
+            make_auth()
+        f = open(vars.creds_path, 'r')
+        creds = json.load(f)
+    else:
+        print("[DEBUG] Loading token from file")
+        creds = vars.token # The ouath token is read from file on the local machine and "imported" on the remote one
     vars.provider = cs.create_provider('onedrive', oauth_config=oauth_config)
-    f = open(vars.creds_path, 'r')
-    creds = json.load(f)
     vars.provider.connect(creds)
 
 def change_namespace(path_in_ns, namespace=None):

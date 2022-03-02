@@ -1,12 +1,16 @@
 from .cloud_storage import connect, change_namespace, download_file
-from .config import get_auth_token, save_auth_token, check_auth, make_auth, check_config, make_config, load_config, check_ssh_connection
+from .config import get_auth_token, save_auth_token, check_auth, make_auth, check_config, make_config, load_config, check_ssh_connection, get_token
 from .remote_exec import remote_exec
 from . import vars
 
 # CloudComputing version
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 # Author (GitHub username)
 __author__ = "mp1994"
+
+# This is set only when CC is imported in the remote server
+__token__ = None
+vars.token = __token__
 
 ## Global variables
 # cloud_storage
