@@ -55,7 +55,7 @@ This software is released with the GNU General Public License v3.0.
 #!/usr/bin/env python
 import CloudComputing as cc
 import pandas as pd
-print("CloudComputing version: {}".format(cc._version))
+print("CloudComputing version: {}".format(cc.__version__))
 
 # Download file from OneDrive...
 path_in_onedrive = "/test.csv"
@@ -68,7 +68,7 @@ print(df.info())
 ``` python
 #!/usr/bin/env python
 import CloudComputing as cc
-print("CloudComputing version {}".format(cc._version))
+print("CloudComputing version {}".format(cc.__version__))
 # Remote execution of this script
 cc.remote_exec(__file__)
 
