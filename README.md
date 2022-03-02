@@ -1,12 +1,12 @@
 # CloudComputing for Python
 
-The `CloudComputing` package can be used to easily exploit advanced functions such as remote executing over SSH and cloud storage (OneDrive/GDrive) with Python.
-The remote execution (`remote_exec.py`) is handled over SSH: source files can be developed and maintained locally and then executed remotely over SSH.
+The `CloudComputing` package can be used to easily exploit advanced functions such as remote executing over SSH and cloud storage (OneDrive/GDrive) with Python.\
+The remote execution (`remote_exec.py`) is handled over SSH: source files can be developed and maintained locally and then executed remotely over SSH.\
 Cloud storage is based on the Python package [cloudsync](https://pypi.org/project/cloudsync/), that supports both Google Drive and OneDrive. It allows to store large datasets on the cloud and access them both locally and remotely, combined with the `remote_exec` functionality. 
 
 ### Requirements
 
-All the required Python packages are listed in the file `requirement.txt` and hence installed automatically with this package. `CloudComputing` was developed and tested on Python 3.9.6 on Linux. The `remote_exec` module is currently working only on Unix systems (by choice...)
+All the required Python packages are installed automatically with this package. `CloudComputing` works on Python 3: it was developed and tested on Python 3.9.6 on Linux. The `remote_exec` module is currently working only on Unix systems (by choice...)\
 You need to set up a secure shell (SSH) connection with the remote host for the `remote_exec` module before using this functionality. You may find instructions on how to do this on the web, such as [this one](https://medium.com/@SergioPietri/how-to-setup-and-use-ssh-for-remote-connections-e86556d804dd).
 ### Install
 
