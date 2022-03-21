@@ -50,6 +50,11 @@ def download_file(filename, namespace=None, output=None):
     tmp.seek(0) # Go back to first line
     return tmp
 
+def read_remote_csv_pandas(fname, header=None, namespace=None):
+    f = download_file(f, namespace=namespace)
+    df = pd.read_csv(f.name, header=header)
+    return df
+
 def upload_file():
     print("> upload_file()")
     print("Still to be implemented...")
