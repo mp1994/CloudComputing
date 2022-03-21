@@ -36,14 +36,22 @@ def change_namespace(path_in_ns, namespace=None):
         print("Changing namespace to: {}".format(x.id))
         vars.provider.namespace = x
 
-def download_file(filename, namespace=None, output=None):
+def download_file(filename, namespace=None, output=None, cached=False, force_dl=False):
     if vars.provider is None:
         connect()
     if not namespace is None:
         change_namespace(namespace)
+    # Check temp dir for a cached version of the file (unless force_dl=True)
+    if not force_dl:
+        pass
     if output is None:
         ext = "." + filename.split(".")[-1]
-        tmp = tf.NamedTemporaryFile(suffix=ext)
+        '''
+        WARNING: caching (delete=False) will not delete the temporary file (stored in /tmp by default).
+        This may be useful instead of re-downloading many times the same file, for speed of execution.
+        The temp dir may be periodically emptied by your system daemons (systemd).
+        '''
+        tmp = tf.NamedTemporaryFile(suffix=ext, dir=vars.tempdir, delete=(not cached))
         print("Downloading to {} ...".format(tmp.name))
     else:
         tmp = open(output, 'w')
