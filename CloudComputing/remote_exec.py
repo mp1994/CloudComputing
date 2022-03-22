@@ -36,10 +36,13 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     if not logfile is None:
         print("Logging to file: {}".format(logfile))
         cmd = cmd + " > {}".format(logfile)
-    subprocess.Popen(cmd, shell=True)
-    # Remove the local temp file
+    r = subprocess.Popen(cmd, shell=True)
+    # Wait for remote process to end
+    r.wait()
+    print("[INFO] Remote process ended.")
+    # Now we can safely remove the local temp file
     subprocess.run("rm {}".format(tmp), shell=True)
     # Remove the remote temp file
-    # os.system("/usr/bin/ssh -p {} {} 'rm {}/{}'".format(vars.ssh_port, vars.ssh_host, rdir, tmp.split("/")[-1]))
+    os.system("/usr/bin/ssh -p {} {} 'rm {}/{}'".format(vars.ssh_port, vars.ssh_host, rdir, tmp.split("/")[-1]))
     # Exit to prevent the calling script to run locally
     exit(0)
