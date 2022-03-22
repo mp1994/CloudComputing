@@ -30,7 +30,7 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     xmd = "/usr/bin/scp -P {} {} {}:{}".format(vars.ssh_port, tmp, vars.ssh_host, rdir)
     subprocess.run(xmd, shell=True)
     # Run over SSH
-    cmd = cmd + " python {}'".format(tmp.split("/")[-1]) # Remove "/tmp/" from the filename
+    cmd = cmd + " python -u {}'".format(tmp.split("/")[-1]) # Remove "/tmp/" from the filename
     if not verbose:
         cmd = cmd + " 1>/dev/null 2>&1"
     if not logfile is None:
