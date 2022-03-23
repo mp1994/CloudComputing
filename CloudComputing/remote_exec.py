@@ -3,8 +3,9 @@ import subprocess
 import tempfile as tf
 from . import vars
 from .config import get_token
+from .cc_debug import cc_print
 
-def remote_exec(path, rdir="./", verbose=True, logfile=None):
+def remote_exec(path, rdir="./", verbose=True, logfile="nohup.out"):
     # If localhost, return
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         cc_print("Running on local machine...", 2)
@@ -24,7 +25,7 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     fout.write(s)
     fout.close()
     # CD to remote dir (if any)
-    cmd = cmd = "/usr/bin/ssh -p {} {}".format(vars.ssh_port, vars.ssh_host)
+    cmd = cmd = "nohup /usr/bin/ssh -p {} {}".format(vars.ssh_port, vars.ssh_host)
     cmd = cmd + " 'cd {} &&".format(rdir)
     # Copy the temp file (script) to the remote working dir
     xmd = "/usr/bin/scp -o LogLevel=Error -P {} {} {}:{}".format(vars.ssh_port, tmp, vars.ssh_host, rdir)
@@ -33,13 +34,12 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     cmd = cmd + " python -u {}'".format(tmp.split("/")[-1]) # Remove "/tmp/" from the filename
     if not verbose:
         cmd = cmd + " 1>/dev/null 2>&1"
-    if not logfile is None:
-        print("Logging to file: {}".format(logfile))
+    if logfile != 'nohup.out':
+        cc_print("Logging to file: {}".format(logfile), 1)
         cmd = cmd + " > {}".format(logfile)
     r = subprocess.Popen(cmd, shell=True)
-    # Wait for remote process to end
-    r.wait()
-    print("[INFO] Remote process ended.")
+    os.system('echo "" > nohup.out')
+    os.system("tail -f {}".format(logfile))    
     # Now we can safely remove the local temp file
     subprocess.run("rm {}".format(tmp), shell=True)
     # Remove the remote temp file
