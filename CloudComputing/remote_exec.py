@@ -7,9 +7,9 @@ from .config import get_token
 def remote_exec(path, rdir="./", verbose=True, logfile=None):
     # If localhost, return
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
-        print("Running on local machine...")
+        cc_print("Running on local machine...", 2)
         return
-    print("Running from file: {}".format(path))
+    cc_print("[INFO] Running from file: {}".format(path), 1)
     # Open the calling script (from path) and read the file
     fin = open(path, 'r')
     # Split the script and take everything after separator
