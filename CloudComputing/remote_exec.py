@@ -28,7 +28,7 @@ def remote_exec(path, rdir="./", verbose=True, logfile="nohup.out"):
     cmd = cmd = "nohup /usr/bin/ssh -p {} {}".format(vars.ssh_port, vars.ssh_host)
     cmd = cmd + " 'cd {} &&".format(rdir)
     # Copy the temp file (script) to the remote working dir
-    xmd = "/usr/bin/scp -o LogLevel=Error -P {} {} {}:{}".format(vars.ssh_port, tmp, vars.ssh_host, rdir)
+    xmd = "/usr/bin/scp -P {} {} {}:{} > /dev/null".format(vars.ssh_port, tmp, vars.ssh_host, rdir)
     subprocess.run(xmd, shell=True)
     # Run over SSH
     cmd = cmd + " python -u {}'".format(tmp.split("/")[-1]) # Remove "/tmp/" from the filename
