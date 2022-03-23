@@ -1,6 +1,7 @@
-from os import name
+from os import name, path
 import cloudsync as cs
 import tempfile as tf
+from .cc_debug import cc_print
 from .config import make_auth
 import pandas as pd
 import json
@@ -36,31 +37,44 @@ def change_namespace(path_in_ns, namespace=None):
         print("Changing namespace to: {}".format(x.id))
         vars.provider.namespace = x
 
-def download_file(filename, namespace=None, output=None, cached=False, force_dl=False):
+def download_file(filename, namespace=None, output=None, cached=True, force_dl=False):
     if vars.provider is None:
         connect()
     if not namespace is None:
         change_namespace(namespace)
     # Check temp dir for a cached version of the file (unless force_dl=True)
-    if not force_dl:
-        pass
+    if force_dl == True:
+        cc_print("Forcing re-download...", 2)
+    else:
+        # Check if file was previously downloaded
+        fname = vars.tempdir + filename.split("/")[-1] # Split filename
+        if path.exists(fname):
+            cc_print("Reading file from cache...", 1)
+        tmp = open(fname, 'r')
+        return tmp
     if output is None:
-        ext = "." + filename.split(".")[-1]
         '''
-        WARNING: caching (delete=False) will not delete the temporary file (stored in /tmp by default).
+        WARNING: caching (cached=False) will not delete the temporary file (stored in /tmp by default).
         This may be useful instead of re-downloading many times the same file, for speed of execution.
         The temp dir may be periodically emptied by your system daemons (systemd).
         '''
-        tmp = tf.NamedTemporaryFile(suffix=ext, dir=vars.tempdir, delete=(not cached))
-        print("Downloading to {} ...".format(tmp.name))
+        if cached and (not force_dl):
+            print("[DEBUG] caching file...")
+            fname = vars.tempdir + filename.split("/")[-1] # Split filename
+            tmp = open(fname, 'wb+')    # Open the file in binary mode ('b') > tmp must be _io.BufferedRandom
+        else:
+            ext = "." + filename.split(".")[-1]
+            tmp = tf.NamedTemporaryFile(suffix=ext, dir=vars.tempdir, delete=(not cached))
+            fname = tmp.name
+        cc_print("Downloading to {} ...".format(fname), 1)
     else:
-        tmp = open(output, 'w')
+        tmp = open(output, 'wb+')
     vars.provider.download_path(filename, tmp)
     tmp.seek(0) # Go back to first line
     return tmp
 
 def read_remote_csv_pandas(fname, header=None, namespace=None):
-    f = download_file(f, namespace=namespace)
+    f = download_file(f, namespace=namespace, cached=False, force_dl=True)
     df = pd.read_csv(f.name, header=header)
     return df
 
