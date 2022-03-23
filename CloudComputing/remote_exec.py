@@ -17,7 +17,7 @@ def remote_exec(path, rdir="./", verbose=True, logfile=None):
     s = s[s.find("\n")+1:len(s)]   
     # Do we need to import CloudComputing? 
     if "CloudComputing" in s or "cc" in s:
-        s = "import CloudComputing as cc\ncc.vars.token = {}\ncc.__token__ = cc.vars.token\n".format(get_token()) + s
+        s = "import CloudComputing as cc\ncc.vars.token = {}\ncc.__token__ = cc.vars.token\ncc.connect()".format(get_token()) + s
     # Write to file
     tmp = os.path.join(tf.gettempdir(), os.urandom(8).hex() + '.py')
     fout = open(tmp, 'w')
