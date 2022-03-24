@@ -45,6 +45,7 @@ def remote_exec(path, rdir="./", verbose=True, logfile="nohup.out"):
     subprocess.Popen("tail -f {}/{}".format(os.environ['HOME'], logfile), shell=True)    
     while r.poll() is None:
         sleep(0.5)
+        # Catch here a CTRL-C to stop remote execution > to do
     # Remote process has finished
     os.system("kill $(pidof tail)")
     # Now we can safely remove the local temp file
