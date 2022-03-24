@@ -50,8 +50,8 @@ def download_file(filename, namespace=None, output=None, cached=True, force_dl=F
         fname = vars.tempdir + filename.split("/")[-1] # Split filename
         if path.exists(fname):
             cc_print("Reading file from cache...", 1)
-        tmp = open(fname, 'r')
-        return tmp
+            tmp = open(fname, 'r')
+            return tmp
     if output is None:
         '''
         WARNING: caching (cached=False) will not delete the temporary file (stored in /tmp by default).
