@@ -7,7 +7,7 @@ from tempfile import gettempdir
 from os import mkdir
 
 # CloudComputing version
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 # Author (GitHub username)
 __author__ = "mp1994"
 
