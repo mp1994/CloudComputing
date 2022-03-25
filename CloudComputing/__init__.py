@@ -1,4 +1,4 @@
-from .cloud_storage import connect, change_namespace, download_file
+from .cloud_storage import connect, change_namespace, download_file, read_remote_csv_pandas
 from .config import get_auth_token, save_auth_token, check_auth, make_auth, check_config, make_config, load_config, check_ssh_connection, get_token
 from .remote_exec import remote_exec
 from . import vars
