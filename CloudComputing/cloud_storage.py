@@ -1,4 +1,4 @@
-from os import name, path
+from os import name, path, system as os_system
 import cloudsync as cs
 import tempfile as tf
 from .cc_debug import cc_print
@@ -69,7 +69,12 @@ def download_file(filename, namespace=None, output=None, cached=True, force_dl=F
         cc_print("Downloading to {} ...".format(fname), 1)
     else:
         tmp = open(output, 'wb+')
-    vars.provider.download_path(filename, tmp)
+    try:
+        vars.provider.download_path(filename, tmp)
+    except:
+        tmp.close()
+        os_system("rm {}".format(tmp))
+        return None
     tmp.seek(0) # Go back to first line
     return tmp
 
