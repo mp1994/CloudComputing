@@ -3,6 +3,8 @@ import json
 import os
 from os.path import exists
 import subprocess
+
+from CloudComputing.cc_debug import cc_print
 from . import vars
 import configparser
 
@@ -22,11 +24,11 @@ def check_auth(silent=False):
     defaultPath = os.environ['HOME'] + "/.cc_auth.json"
     if exists(defaultPath):
         if not silent:
-            print("[INFO] Configuration found in: {}".format(defaultPath))
+            cc_print("Configuration found in: {}".format(defaultPath), 1)
         return defaultPath
     else:
         if not silent:
-            print("[INFO] No configuration found in default path.")
+            cc_print("No configuration found in default path.", 1)
         return False
 
 def make_auth(Force=False):
@@ -35,7 +37,7 @@ def make_auth(Force=False):
         print("Starting OneDrive auth...")
     else:
         if Force == False:
-            print("Use check_auth(Force=True) to overwrite the existing OAuth token.")
+            cc_print("Use make_auth(Force=True) to overwrite the existing OAuth token.", 2)
             return
     token = get_auth_token()
     defaultPath = os.environ['HOME'] + "/"
@@ -43,7 +45,7 @@ def make_auth(Force=False):
     f = input() or defaultPath
     f = f + ".cc_auth.json"
     save_auth_token(f, creds=token)
-    print("[INFO] Token saved to file: {}".format(f))
+    cc_print("Token saved to file: {}".format(f), 2)
 
 def get_token():
     f = open(vars.creds_path, 'r')
@@ -55,11 +57,11 @@ def check_config(silent=False):
     defaultPath = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
     if exists(defaultPath):
         if not silent:
-            print("[INFO] Global SSH configuration found in {}".format(defaultPath))
+            cc_print("[INFO] Global SSH configuration found in {}".format(defaultPath), 1)
         vars.global_config = defaultPath
     else:
         if not silent:
-            print("[WARNING] Global SSH configuration not found. Call config.make_config() to create one.")
+            cc_print("Global SSH configuration not found. Call config.make_config() to create one.", 2)
 
 def make_config(local=False):
     if local:
@@ -67,7 +69,7 @@ def make_config(local=False):
     else:
         defaultPath = os.environ['HOME'] + "/." + os.environ['USER'] + "-config.ini"
         if exists(defaultPath):
-            print("[INFO] Global configuration already set. This will overwrite the existing configuration.")
+            cc_print("Global configuration already set. This will overwrite the existing configuration.", 1)
     host = input("SSH user@host: ")
     if not "@" in host:
         print("Please provide user and host (e.g., admin@127.0.0.1")
@@ -75,13 +77,13 @@ def make_config(local=False):
     port = input("SSH port (22): ") or "22" # Default: 22
     f = open(defaultPath, 'w')
     if f.closed:
-        print("[ERROR] Unable to open file {}".format(defaultPath))
+        cc_print("Unable to open file {}".format(defaultPath), 3)
         return
     f.write("[SSH]\n")
     f.write("host = {}\n".format(host))
     f.write("port = {}\n".format(port))
     f.close()
-    print("[INFO] {} configuration saved successfully.".format("Local" if local else "Global"))
+    cc_print("{} configuration saved successfully.".format("Local" if local else "Global"), 1)
     if local:
         vars.local_config = defaultPath
     else:
@@ -95,7 +97,7 @@ def load_config():
     if exists(p):
         vars.local_config = p
     if vars.global_config == "" and vars.local_config == "":
-        print("[WARNING] You need to set either a local or global configuration file.")
+        cc_print("You need to set either a local or global configuration file.", 2)
         return None
     c = configparser.ConfigParser()
     if vars.local_config == "":
@@ -106,13 +108,14 @@ def load_config():
 
 def check_ssh_connection():
     if vars.global_config == "" and vars.local_config == "":
-        print("[ERROR] No valid configuration file found. Exiting...")
+        cc_print("[ERROR] No valid configuration file found. Exiting...", 3)
+        return
     cmd = "ssh -p {} {} uname -n".format(vars.ssh_port, vars.ssh_host)
     print("Testing connection: " + cmd)
     cmd = "ssh -p {} {} uname -n".format(vars.ssh_port, vars.ssh_host)
     try:
         out = subprocess.check_output(cmd, shell=True).decode().strip()
     except subprocess.CalledProcessError:
-        print("[WARNING] SSH connection issue.")
+        cc_print("[WARNING] SSH connection issue.", 2)
         return
-    print("[INFO] Connected to host: {}".format(out))
+    cc_print("Connected to host: {}".format(out), 1)
