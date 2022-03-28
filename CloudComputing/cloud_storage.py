@@ -7,8 +7,13 @@ import pandas as pd
 import json
 from . import vars
 
+# Override the creds_changed function to suppress the warning
+def creds_changed(x):  # pylint: disable=unused-argument
+    pass
+
 def connect():
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
+    oauth_config.creds_changed = creds_changed
     if vars.token is None:
         if vars.creds_path == "":
             make_auth()
