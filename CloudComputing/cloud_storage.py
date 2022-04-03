@@ -6,12 +6,28 @@ from .config import make_auth
 import pandas as pd
 import json
 from . import vars
+import sys
+import pkg_resources
 
 # Override the creds_changed function to suppress the warning
 def creds_changed(x):  # pylint: disable=unused-argument
     pass
 
+def discover_providers():
+    print("over-ride!")
+    """Loop through imported modules, and autoregister providers, including plugins"""
+    for m in sys.modules:
+        mod = sys.modules[m]
+        if hasattr(mod, "__cloudsync__")  and ("cloudsync" in mod.__name__):
+            print(mod.__name__)
+            if (mod.__cloudsync__.name not in cs.registry.providers):   # type: ignore
+                register_provider(mod.__cloudsync__)                    # type: ignore  
+    for entry_point in pkg_resources.iter_entry_points('cloudsync.providers'):
+        cs.register_provider(entry_point.resolve())
+
 def connect():
+    # Override cs.registry.discover_providers > causing bug with TensorFlow
+    cs.registry.discover_providers = discover_providers
     oauth_config = cs.command.utils.generic_oauth_config('onedrive')
     oauth_config.creds_changed = creds_changed
     if vars.token is None:
@@ -63,8 +79,7 @@ def download_file(filename, namespace=None, output=None, cached=True, force_dl=F
         This may be useful instead of re-downloading many times the same file, for speed of execution.
         The temp dir may be periodically emptied by your system daemons (systemd).
         '''
-        if cached and (not force_dl):
-            print("[DEBUG] caching file...")
+        if cached:
             fname = vars.tempdir + filename.split("/")[-1] # Split filename
             tmp = open(fname, 'wb+')    # Open the file in binary mode ('b') > tmp must be _io.BufferedRandom
         else:
