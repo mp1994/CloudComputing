@@ -13,8 +13,8 @@ import pkg_resources
 def creds_changed(x):  # pylint: disable=unused-argument
     pass
 
+# Override function cs.registry.discover_providers
 def discover_providers():
-    print("over-ride!")
     """Loop through imported modules, and autoregister providers, including plugins"""
     for m in sys.modules:
         mod = sys.modules[m]
