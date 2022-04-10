@@ -8,7 +8,7 @@ from os import mkdir, path
 import sys, __main__
 
 # CloudComputing version
-__version__ = "0.2.2"
+__version__ = "0.3.0"
 # Author (GitHub username)
 __author__ = "mp1994"
 
