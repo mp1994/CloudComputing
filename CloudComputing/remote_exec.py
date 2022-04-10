@@ -38,7 +38,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     # Open the calling script (from path) and read the file
     fin = open(path, 'r')
     # Split the script and take everything after separator
-    s = fin.read().split("__file__")[-1]
+    s = fin.read().split("rdir=")[-1]
     s = s[s.find("\n")+1:len(s)]   
 
     # Do we need to import CloudComputing? 
