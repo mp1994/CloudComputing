@@ -65,7 +65,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     
     # Command to run over ssh
     cmd = cmd = "nohup /usr/bin/ssh -p {} {} 'cd {} &&".format(vars.ssh_port, vars.ssh_host, rdir)
-    cmd = cmd + " python -u {} &' > {}/{}".format(tmp, os.environ['HOME'], logfile) # Run file from /tmp
+    cmd = cmd + " python -u {} 2>&1 &' > {}/{}".format(tmp, os.environ['HOME'], logfile) # Run file from /tmp
     # '&' in remote command will not exit if we close the local shell
     if not verbose:
         cmd = cmd + " 1>/dev/null 2>&1"
