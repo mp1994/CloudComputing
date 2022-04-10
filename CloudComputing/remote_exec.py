@@ -17,11 +17,19 @@ def __quit__(tmp, ssh_timeout=False):
     # Exit to prevent the calling script to run locally after remote exeuction
     exit(0)
 
-def remote_exec(path, rdir="./", verbose=True, logfile="nohup.out"):
+def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     # If localhost, return
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         cc_print("Running on local machine...", 2)
         return
+
+    # Run locally if iPython, otherwise set path
+    if vars.__file__ is None:
+        cc_print("Running on local iPython kernel")
+        return
+    else:
+        path = vars.__file__ if path is None else path
+
     cc_print("Running from file: {}".format(path), 1)
 
     # Check if this file is already running remotely

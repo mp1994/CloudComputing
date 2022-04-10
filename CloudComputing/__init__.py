@@ -4,7 +4,8 @@ from .remote_exec import remote_exec
 from . import vars
 from .cc_debug import cc_print
 from tempfile import gettempdir
-from os import mkdir
+from os import mkdir, path
+import sys, __main__
 
 # CloudComputing version
 __version__ = "0.2.2"
@@ -31,3 +32,8 @@ try:
     mkdir(vars.tempdir)
 except FileExistsError:
     pass
+# Get path of calling script (if any)
+if hasattr(__main__, "get_ipython"):
+    vars.__file__ = None
+else:
+    vars.__file__ = path.abspath(sys.argv[0])
