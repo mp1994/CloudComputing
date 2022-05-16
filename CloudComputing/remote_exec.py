@@ -8,6 +8,7 @@ from time import sleep
 
 
 def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
+    print('debug')
     # If localhost, return
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         cc_print("Running on local machine...", 2)
@@ -33,7 +34,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
 
     # Do we need to import CloudComputing? 
     if "CloudComputing" in s or "cc" in s:
-        s = "import CloudComputing as cc\ncc.vars.token = {}\ncc.__token__ = cc.vars.token\ncc.connect()\n".format(get_token()) + s
+        s = "import CloudComputing as cc\ncc.vars.token = {}\ncc.__token__ = cc.vars.token\ncc.connect()\nprint(__file__)\n".format(get_token()) + s
     
     # Write to file
     tmp = os.path.join(tf.gettempdir(), os.urandom(8).hex() + '.py')
@@ -42,10 +43,10 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     fout.close()
     
     # Clear nohup.out (if any)
-    os.system('echo "---" > {}/nohup.out'.format(os.environ['HOME']))
-    
+    os.system('echo {} > {}/nohup.out'.format(tmp, os.environ['HOME']))
+
     # Copy the temp file (script) to the remote working dir
-    xmd = "/usr/bin/scp -o ConnectTimeout=2 -P {} {} {}:/tmp/ > /dev/null".format(vars.ssh_port, tmp, vars.ssh_host) # Copy to /tmp/
+    xmd = "/usr/bin/scp -o ConnectTimeout=2 -P {} {} {}:{} > /dev/null".format(vars.ssh_port, tmp, vars.ssh_host, tmp) # Copy to /tmp/
     r = subprocess.Popen(xmd, shell=True)
     r.wait()
     # Check if SSH connection timed-out
