@@ -6,16 +6,6 @@ from .config import get_token
 from .cc_debug import cc_print
 from time import sleep
 
-def __quit__(tmp, ssh_timeout=False):
-    # Remote process has finished
-    os.system("kill $(pidof tail) 2>/dev/null")
-    # Now we can safely remove the local temp file
-    subprocess.run("rm {}".format(tmp), shell=True)
-    # Remove the remote temp file, if any
-    if ssh_timeout is False:
-        os.system("/usr/bin/ssh -p {} {} 'rm {}'".format(vars.ssh_port, vars.ssh_host, tmp))
-    # Exit to prevent the calling script to run locally after remote exeuction
-    exit(0)
 
 def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     # If localhost, return
@@ -61,11 +51,11 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     # Check if SSH connection timed-out
     if r.returncode == 1:
         cc_print("SSH connection timed out! Check settings and retry.", 2)
-        __quit__(tmp, ssh_timeout=True)
-    
+        exit(1)
+
     # Command to run over ssh
-    cmd = cmd = "nohup /usr/bin/ssh -p {} {} 'cd {} &&".format(vars.ssh_port, vars.ssh_host, rdir)
-    cmd = cmd + " python -u {} 2>&1 &' > {}/{}".format(tmp, os.environ['HOME'], logfile) # Run file from /tmp
+    cmd = cmd = "nohup /usr/bin/ssh -p {} {} 'cd {} && ".format(vars.ssh_port, vars.ssh_host, rdir)
+    cmd = cmd + "python -u {} 2>&1 &' > {}/{}".format(tmp, os.environ['HOME'], logfile) # Run file from /tmp
     # '&' in remote command will not exit if we close the local shell
     if not verbose:
         cmd = cmd + " 1>/dev/null 2>&1"
@@ -76,9 +66,5 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     r = subprocess.Popen(cmd, shell=True)   # Popen is non blocking, code execution locally will continue
     subprocess.Popen("tail -f {}/{}".format(os.environ['HOME'], logfile), shell=True)    
 
-    while r.poll() is None:
-        sleep(0.75)
-        # Catch here CTRL-X to stop remote execution > to do
-        # Catch here CTRL-C > close local only and continue on remote server
-    
-    __quit__(tmp)
+    # Exit to prevent the calling script to run locally after remote exeuction
+    exit(0)
