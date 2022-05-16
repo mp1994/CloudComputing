@@ -99,7 +99,7 @@ def download_file(filename, namespace=None, output=None, cached=True, force_dl=F
     return tmp
 
 def read_remote_csv_pandas(fname, header=None, namespace=None):
-    f = download_file(f, namespace=namespace, cached=False, force_dl=True)
+    f = download_file(fname, namespace=namespace, cached=False, force_dl=True)
     df = pd.read_csv(f.name, header=header)
     return df
 
