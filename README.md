@@ -70,7 +70,7 @@ print(df.info())
 import CloudComputing as cc
 print("CloudComputing version {}".format(cc.__version__))
 # Remote execution of this script
-cc.remote_exec(__file__)
+cc.remote_exec()
 
 # The rest of this file runs on a remote server via SSH...
 import os
