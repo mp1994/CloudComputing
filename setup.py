@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.3.3' 
+VERSION = '0.3.4' 
 DESCRIPTION = 'CloudComputing package'
 LONG_DESCRIPTION = 'The CloudComputing package can be used to ease remote executing over SSH and cloud storage (OneDrive) with Python.'
 

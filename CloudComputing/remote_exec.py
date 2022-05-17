@@ -62,7 +62,6 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
         cmd = cmd + " 1>/dev/null 2>&1"
     if logfile != 'nohup.out':
         cc_print("Logging to file: {}".format(logfile), 1)
-        cmd = cmd + " > {}".format(logfile)
     print(cmd)
     r = subprocess.Popen(cmd, shell=True)   # Popen is non blocking, code execution locally will continue
     subprocess.Popen("tail -f {}/{}".format(os.environ['HOME'], logfile), shell=True)    
