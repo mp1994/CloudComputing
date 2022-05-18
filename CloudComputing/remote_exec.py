@@ -41,8 +41,10 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     fout.write(s)
     fout.close()
     
-    # Clear nohup.out (if any)
-    os.system('echo {} > {}/nohup.out'.format(tmp, os.environ['HOME']))
+    # Create the logfile in the remote working directory
+    xmd = "/usr/bin/ssh -p {} {} 'echo > {}'".format(vars.ssh_port, vars.ssh_host, (rdir + "/" + logfile))
+    r = subprocess.Popen(xmd, shell=True)
+    r.wait()
 
     # Copy the temp file (script) to the remote working dir
     xmd = "/usr/bin/scp -o ConnectTimeout=2 -P {} {} {}:{} > /dev/null".format(vars.ssh_port, tmp, vars.ssh_host, tmp) # Copy to /tmp/
@@ -54,16 +56,18 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
         exit(1)
 
     # Command to run over ssh
-    cmd = cmd = "nohup /usr/bin/ssh -p {} {} 'cd {} && ".format(vars.ssh_port, vars.ssh_host, rdir)
-    cmd = cmd + "python -u {} 2>&1 &' > {}/{}".format(tmp, os.environ['HOME'], logfile) # Run file from /tmp
     # '&' in remote command will not exit if we close the local shell
-    if not verbose:
-        cmd = cmd + " 1>/dev/null 2>&1"
-    if logfile != 'nohup.out':
-        cc_print("Logging to file: {}".format(logfile), 1)
+    # Log stdout and stderr in remote logfile
+    cmd = cmd = "nohup /usr/bin/ssh -p {} {} 'cd {} && ".format(vars.ssh_port, vars.ssh_host, rdir)
+    cmd = cmd + "python -u {} 2>&1 > {} &'".format(tmp, logfile) # Run file from /tmp
     print(cmd)
-    r = subprocess.Popen(cmd, shell=True)   # Popen is non blocking, code execution locally will continue
-    subprocess.Popen("tail -f {}/{}".format(os.environ['HOME'], logfile), shell=True)    
+    # Popen is non blocking, code execution locally will continue
+    r = subprocess.Popen(cmd, shell=True)   
+    cc_print("Logging to file: {}".format(logfile), 1)
+    
+    # If in verbose mode, tail the remote logfile
+    if verbose:
+        subprocess.Popen("/usr/bin/ssh -p {} {} 'tail -f {}' &".format(vars.ssh_port, vars.ssh_host, (rdir + "/" + logfile)), shell=True)    
 
     # Exit to prevent the calling script to run locally after remote exeuction
     exit(0)
