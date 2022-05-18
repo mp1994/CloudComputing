@@ -23,7 +23,21 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     cc_print("Running from file: {}".format(path), 1)
 
     # Check if this file is already running remotely
-    # >>> TO DO
+    running = True
+    try:
+        out = subprocess.check_output("ssh -p {} {} 'pgrep -f {}'".format(vars.ssh_port, vars.ssh_host, path.split('/')[-1]), shell=1)
+    except subprocess.CalledProcessError:
+        running = False
+    if running:
+        cc_print("This script is already running on the remote machine!", 2)
+        a = input("           Press X to stop the remote execution, or M to monitor its execution [M]: ")
+        if a.upper() == 'X':
+            r = subprocess.Popen("/usr/bin/ssh -p {} {} 'kill $(pgrep -f {})'".format(vars.ssh_port, vars.ssh_host, path.split('/')[-1]), shell=1)
+            r.wait()
+            exit(1)
+        # Re-start the tail process and exit
+        subprocess.run("/usr/bin/ssh -p {} {} 'tail -f {}'".format(vars.ssh_port, vars.ssh_host, (rdir + "/" + logfile)), shell=True) 
+        exit(0)        
 
     # Open the calling script (from path) and read the file
     fin = open(path, 'r')
@@ -58,8 +72,8 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     # Command to run over ssh
     # '&' in remote command will not exit if we close the local shell
     # Log stdout and stderr in remote logfile
-    cmd = cmd = "nohup /usr/bin/ssh -p {} {} 'cd {} && ".format(vars.ssh_port, vars.ssh_host, rdir)
-    cmd = cmd + "python -u {} 2>&1 > {} &'".format(tmp, logfile) # Run file from /tmp
+    cmd = cmd = "/usr/bin/ssh -p {} {} 'cd {} && ".format(vars.ssh_port, vars.ssh_host, rdir)
+    cmd = cmd + "python -u {} 2>&1 > {} &' > /dev/null".format(tmp, logfile) # Run file from /tmp
     print(cmd)
     # Popen is non blocking, code execution locally will continue
     r = subprocess.Popen(cmd, shell=True)   
@@ -67,7 +81,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     
     # If in verbose mode, tail the remote logfile
     if verbose:
-        subprocess.Popen("/usr/bin/ssh -p {} {} 'tail -f {}' &".format(vars.ssh_port, vars.ssh_host, (rdir + "/" + logfile)), shell=True)    
+        subprocess.run("/usr/bin/ssh -p {} {} 'tail -f {}'".format(vars.ssh_port, vars.ssh_host, (rdir + "/" + logfile)), shell=True)    
 
     # Exit to prevent the calling script to run locally after remote exeuction
     exit(0)
