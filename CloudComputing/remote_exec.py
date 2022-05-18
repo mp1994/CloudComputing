@@ -8,7 +8,6 @@ from time import sleep
 
 
 def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
-    print('debug')
     # If localhost, return
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         cc_print("Running on local machine...", 2)
@@ -37,7 +36,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
         s = "import CloudComputing as cc\ncc.vars.token = {}\ncc.__token__ = cc.vars.token\ncc.connect()\nprint(__file__)\n".format(get_token()) + s
     
     # Write to file
-    tmp = os.path.join(tf.gettempdir(), os.urandom(8).hex() + '.py')
+    tmp = os.path.join(tf.gettempdir(), path.split('/')[-1])
     fout = open(tmp, 'w')
     fout.write(s)
     fout.close()
