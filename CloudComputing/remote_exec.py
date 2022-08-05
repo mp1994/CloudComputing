@@ -7,7 +7,7 @@ from .cc_debug import cc_print
 from time import sleep
 
 
-def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
+def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out",parallel=False,args_User="001"):
     # If localhost, return
     if 'localhost' in vars.ssh_host or '127.0.0.1' in vars.ssh_host:
         cc_print("Running on local machine...", 2)
@@ -28,7 +28,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
         out = subprocess.check_output("ssh -p {} {} 'pgrep -f {}'".format(vars.ssh_port, vars.ssh_host, path.split('/')[-1]), shell=1)
     except subprocess.CalledProcessError:
         running = False
-    if running:
+    if running and not parallel:
         cc_print("This script is already running on the remote machine!", 2)
         a = input("           Press X to stop the remote execution, or M to monitor its execution [M]: ")
         if a.upper() == 'X':
@@ -73,7 +73,7 @@ def remote_exec(rdir="./", path=None, verbose=True, logfile="nohup.out"):
     # '&' in remote command will not exit if we close the local shell
     # Log stdout and stderr in remote logfile
     cmd = cmd = "/usr/bin/ssh -p {} {} 'cd {} && ".format(vars.ssh_port, vars.ssh_host, rdir)
-    cmd = cmd + "python -u {} 2>&1 > {} &' > /dev/null".format(tmp, logfile) # Run file from /tmp
+    cmd = cmd + "python -u {} -u {}  ' ".format(tmp, args_User) # Run file from /tmp
     print(cmd)
     # Popen is non blocking, code execution locally will continue
     r = subprocess.Popen(cmd, shell=True)   
